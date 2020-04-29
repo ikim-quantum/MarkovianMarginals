@@ -38,7 +38,7 @@ class Marginal:
     @classmethod
     def rand(cls, var_list):
         out = Marginal(var_list)
-        for x in np.ndindex([2] * out.n):
+        for x in np.ndindex(tuple([2] * out.n)):
             out.pdf[x] = np.random.rand()
         out.pdf /= out.pdf.sum()
         return out
@@ -72,7 +72,7 @@ class Marginal:
         Args:
             var: Name of the variable we want to remove
         """
-        idx = self.var_list(var)
+        idx = self.var_list.index(var)
         self.remove_idx(idx)
 
     def remove_vars(self, my_vars):
@@ -83,7 +83,7 @@ class Marginal:
             my_vars(list): A list of variables we want to remove
         """
         for var in my_vars:
-            self.remove_var(self, var)
+            self.remove_var(var)
 
     def marginal(self, my_vars):
         """
@@ -112,13 +112,10 @@ class Marginal:
             bool: True if the two are consistent with the tolerance
                   False otherwise
         """
-        overlap = list(set(self.var_list).intersection(other.vars_list))
-        marginal_self = self.marginal(overlap)
-        marginal_other = other.marginal(overlap)
-        if marginal_self.vars_list == marginal_other.vars_list:
-            if abs(marginal_self.pdf - marginal_other.pdf).sum() > tolerance:
-                return True
-        return False
+        if self.consistency_with(other) < tolerance:
+            return True
+        else:
+            return False
 
     def consistency_with(self, other):
         """
@@ -131,11 +128,11 @@ class Marginal:
         Returns:
             float: Total variational distance
         """
-        overlap = list(set(self.var_list).intersection(other.vars_list))
+        overlap = list(set(self.var_list).intersection(other.var_list))
         m_self = self.marginal(overlap)
         m_other = other.marginal(overlap)
-        perm_self = [overlap.index(var) for var in m_self.vars_list]
-        perm_other = [overlap.index(var) for var in m_other.vars_list]
+        perm_self = [overlap.index(var) for var in m_self.var_list]
+        perm_other = [overlap.index(var) for var in m_other.var_list]
         pdf_self = m_self.pdf.transpose(perm_self)
         pdf_other = m_other.pdf.transpose(perm_other)
 
