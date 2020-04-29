@@ -6,7 +6,6 @@
 import numpy as np
 import copy
 
-N = 100
 
 class Marginals:
     """
@@ -16,8 +15,8 @@ class Marginals:
     """
     def __init__(self, var_list):
         self.var_list = var_list
-        self.n = len(bits)
-        self.pdf = np.ones(1<<self.n) / (1<<self.n)
+        self.n = len(var_list)
+        self.pdf = np.ones([2] * self.n) / (1<<self.n)
 
     def remove_idx(self, k):
         """
@@ -29,8 +28,7 @@ class Marginals:
         # Remove the bit
         self.var_list.pop(k)
         # Sum
-        bitstrings = [s for s in range(1<<self.n) if s&(1<<k)]
-        self.pdf = [pdf[s]+pdf[s^(1<<k)] for s in bitstrings]
+        self.pdf = self.pdf.sum(k)
 
     def remove_idxs(self, ks):
         """
@@ -78,11 +76,11 @@ class Marginals:
         """
         Checks if self is consistent with the other.
         """
-        overlap = list(set(self.vars_list).intersection(other.vars_list))
+        overlap = list(set(self.var_list).intersection(other.vars_list))
         marginal_self = self.marginal(overlap)
         marginal_other = other.marginal(overlap)
         if marginal_self.vars_list == marginal_other.vars_list:
-            if sum(abs(marginal_self.pdf - marginal_other.pdf)) > tolerance:
+            if abs(marginal_self.pdf - marginal_other.pdf).sum() > tolerance:
                 return True
         return False
 
