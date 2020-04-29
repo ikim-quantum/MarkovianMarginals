@@ -66,6 +66,9 @@ class Marginals:
 
         Args:
             my_vars(list): A list of variables
+
+        Returns:
+            Marginal: Marginal of self to my_vars
         """
         mycopy = copy.deepcopy(self)
         vars_remove = list(set(self.var_list) - set(my_vars))
@@ -75,6 +78,14 @@ class Marginals:
     def is_consistent_with(self, other, tolerance= 0.00001):
         """
         Checks if self is consistent with the other.
+
+        Args:
+            other(Marginal): Other marginal
+            tolerance(float): error tolerance
+
+        Returns:
+            bool: True if the two are consistent with the tolerance
+                  False otherwise
         """
         overlap = list(set(self.var_list).intersection(other.vars_list))
         marginal_self = self.marginal(overlap)
@@ -84,7 +95,27 @@ class Marginals:
                 return True
         return False
 
-    def __isub__(self, bits):
-        for bit in bits:
-            if bit in self.bits:
+    def consistency_with(self, other):
+        """
+        Total variational distance between self and other marginalized
+        over their overlaps.
+
+        Args:
+            other(Marginal): Other marginal
+
+        Returns:
+            float: Total variational distance
+        """
+        overlap = list(set(self.var_list).intersection(other.vars_list))
+        m_self = self.marginal(overlap)
+        m_other = other.marginal(overlap)
+        perm_self = [overlap.index(var) for var in m_self.vars_list]
+        perm_other = [overlap.index(var) for var in m_other.vars_list]
+        pdf_self = m_self.pdf.transpose(perm_self)
+        pdf_other = m_other.pdf.transpose(perm_other)
+
+        return abs(pdf_self-pdf_other).sum()
+        
+        
+    
                 
