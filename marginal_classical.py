@@ -1,8 +1,8 @@
-##########################################
-# Markovian Marginal : 1D Classical case #
-# Isaac H. Kim 4/28/2020                 #
-# MIT License                            #
-##########################################
+#############################
+# Marginal : Classical      #
+# Isaac H. Kim 4/28/2020    #
+# MIT License               #
+#############################
 import numpy as np
 import copy
 
@@ -26,7 +26,8 @@ def ent(p):
 class Marginal:
     """
     Attrs:
-        vars(list): List of binary random variables.
+        var_list(list): List of binary random variables
+        n(int): Number of random variables
         pdf(np.array): Joint probability distribution
     """
     def __init__(self, var_list):
