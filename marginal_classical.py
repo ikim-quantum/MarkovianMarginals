@@ -7,22 +7,6 @@ import numpy as np
 import copy
 
 
-def ent(p):
-    """
-    Numerically stable calculation of -p log p
-
-    Args:
-        p(ndarray-like object)
-
-    Returns:
-        ndarray-like object: -p * log p
-    """
-    if p == 0.0:
-        return 0
-    else:
-        return -p*np.log(p)
-
-
 class Marginal:
     """
     Attrs:
@@ -143,4 +127,4 @@ class Marginal:
         Returns:
             float: Entropy of self
         """
-        return (ent(self.pdf)).sum()
+        return -(self.pdf * np.log(self.pdf)).sum()
