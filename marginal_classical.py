@@ -35,6 +35,14 @@ class Marginal:
         self.n = len(var_list)
         self.pdf = np.ones([2] * self.n) / (1<<self.n)
 
+    @classmethod
+    def rand(cls, var_list):
+        out = Marginal(var_list)
+        for x in np.ndindex([2] * out.n):
+            out.pdf[x] = np.random.rand()
+        out.pdf /= out.pdf.sum()
+        return out
+
     def remove_idx(self, k):
         """
         Remove the k'th variable in the list.
