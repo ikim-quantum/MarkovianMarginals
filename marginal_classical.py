@@ -7,7 +7,23 @@ import numpy as np
 import copy
 
 
-class Marginals:
+def ent(p):
+    """
+    Numerically stable calculation of -p log p
+
+    Args:
+        p(ndarray-like object)
+
+    Returns:
+        ndarray-like object: -p * log p
+    """
+    if p == 0.0:
+        return 0
+    else:
+        return -p*np.log(p)
+
+
+class Marginal:
     """
     Attrs:
         vars(list): List of binary random variables.
@@ -115,7 +131,10 @@ class Marginals:
         pdf_other = m_other.pdf.transpose(perm_other)
 
         return abs(pdf_self-pdf_other).sum()
-        
-        
-    
-                
+
+    def entropy(self):
+        """
+        Returns:
+            float: Entropy of self
+        """
+        return (ent(self.pdf)).sum()
